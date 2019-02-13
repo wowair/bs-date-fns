@@ -23,24 +23,24 @@ let closestIndexTo = flip(internal_closestIndexTo);
 let closestTo = flip(internal_closestTo);
 [@bs.module "date-fns"] external compareAsc : (Js.Date.t, Js.Date.t) => int = "compareAsc";
 [@bs.module "date-fns"] external compareDesc : (Js.Date.t, Js.Date.t) => int = "compareDesc";
-type distanceInWordsOptions = {.
+type formatDistanceOptions = {.
   "includeSeconds": Js.Nullable.t(bool),
   "addSuffix": Js.Nullable.t(bool),
 };
-[@bs.module "date-fns"] external internal_distanceInWords : (Js.Date.t, Js.Date.t, distanceInWordsOptions) => string = "distanceInWords";
-let distanceInWords = (~includeSeconds=?, ~addSuffix=?, dateToCompare, date) =>
-  internal_distanceInWords(dateToCompare, date, {
+[@bs.module "date-fns"] external internal_formatDistance : (Js.Date.t, Js.Date.t, formatDistanceOptions) => string = "formatDistance";
+let formatDistance = (~includeSeconds=?, ~addSuffix=?, dateToCompare, date) =>
+  internal_formatDistance(dateToCompare, date, {
     "includeSeconds": includeSeconds |> handleOptBool,
     "addSuffix": addSuffix |> handleOptBool
   });
-type distanceInWordsStrictOptions = {.
+type formatDistanceStrictOptions = {.
   "addSuffix": Js.Nullable.t(bool),
   "unit": Js.Nullable.t(string),
   "partialMethod": Js.Nullable.t(string)
 };
-[@bs.module "date-fns"] external internal_distanceInWordsStrict : (Js.Date.t, Js.Date.t, distanceInWordsStrictOptions) => string = "distanceInWordsStrict";
-let distanceInWordsStrict = (~addSuffix=?, ~unit=?, ~partialMethod=?, dateToCompare, date) =>
-  internal_distanceInWordsStrict(dateToCompare, date, {
+[@bs.module "date-fns"] external internal_formatDistanceStrict : (Js.Date.t, Js.Date.t, formatDistanceStrictOptions) => string = "formatDistanceStrict";
+let formatDistanceStrict = (~addSuffix=?, ~unit=?, ~partialMethod=?, dateToCompare, date) =>
+  internal_formatDistanceStrict(dateToCompare, date, {
     "addSuffix": addSuffix |> handleOptBool,
     "unit": unit
       |> Js.Option.map([@bs] unit => timeUnitToString(unit))
@@ -48,16 +48,6 @@ let distanceInWordsStrict = (~addSuffix=?, ~unit=?, ~partialMethod=?, dateToComp
     "partialMethod": partialMethod
       |> Js.Option.map([@bs] partialMethod => partialMethodToString(partialMethod))
       |> Js.Nullable.fromOption
-  });
-type distanceInWordsToNowOptions = {.
-  "includeSeconds": Js.Nullable.t(bool),
-  "addSuffix": Js.Nullable.t(bool)
-};
-[@bs.module "date-fns"] external internal_distanceInWordsToNow : (Js.Date.t, distanceInWordsToNowOptions) => string = "distanceInWordsToNow";
-let distanceInWordsToNow = (~includeSeconds=?, ~addSuffix=?, date) =>
-  internal_distanceInWordsToNow(date, {
-    "includeSeconds": includeSeconds |> handleOptBool,
-    "addSuffix": addSuffix |> handleOptBool
   });
 
 [@bs.module "date-fns"] external internal_format : (Js.Date.t, string) => string = "format";
@@ -85,8 +75,12 @@ let parseString = (~additionalDigits=?, string) => internal_parseString(string, 
 });
 [@bs.module "date-fns"] external areRangesOverlapping : (Js.Date.t, Js.Date.t, Js.Date.t, Js.Date.t) => bool = "areRangesOverlapping";
 [@bs.module "date-fns"] external getOverlappingDaysInRanges : (Js.Date.t, Js.Date.t, Js.Date.t, Js.Date.t) => float = "getOverlappingDaysInRanges";
-[@bs.module "date-fns"] external internal_isWithinRange : (Js.Date.t, Js.Date.t, Js.Date.t) => bool = "isWithinRange";
-let isWithinRange = (startDate, endDate, date) => internal_isWithinRange(date, startDate, endDate);
+type isWithinIntervalDates = {.
+  "start": Js.Date.t,
+  "end": Js.Date.t,
+};
+[@bs.module "date-fns"] external internal_isWithinInterval : (Js.Date.t, isWithinIntervalDates) => bool = "isWithinInterval";
+let isWithinInterval = (startDate, endDate, date) => internal_isWithinInterval(date, {"start": startDate, "end": endDate});
 
 [@bs.module "date-fns"] external getTime : Js.Date.t => float = "getTime";
 [@bs.module "date-fns"] external getMilliseconds : (Js.Date.t) => float = "getMilliseconds";
@@ -96,15 +90,15 @@ let isWithinRange = (startDate, endDate, date) => internal_isWithinRange(date, s
 [@bs.module "date-fns"] external getDate : (Js.Date.t) => float = "getDate";
 [@bs.module "date-fns"] external getDayOfYear : (Js.Date.t) => float = "getDayOfYear";
 [@bs.module "date-fns"] external getDay : (Js.Date.t) => float = "getDay";
-[@bs.module "date-fns"] external getISODay : (Js.Date.t) => float = "getIsoDay";
-[@bs.module "date-fns"] external getISOWeek : (Js.Date.t) => float = "getIsoWeek";
+[@bs.module "date-fns"] external getISODay : (Js.Date.t) => float = "getISODay";
+[@bs.module "date-fns"] external getISOWeek : (Js.Date.t) => float = "getISOWeek";
 [@bs.module "date-fns"] external getDaysInMonth : (Js.Date.t) => float = "getDaysInMonth";
 [@bs.module "date-fns"] external getMonth : (Js.Date.t) => float = "getMonth";
 [@bs.module "date-fns"] external getQuarter : (Js.Date.t) => float = "getQuarter";
 [@bs.module "date-fns"] external getDaysInYear : (Js.Date.t) => float = "getDaysInYear";
 [@bs.module "date-fns"] external getYear : (Js.Date.t) => float = "getYear";
-[@bs.module "date-fns"] external getISOWeeksInYear : (Js.Date.t) => float = "getIsoWeeksInYear";
-[@bs.module "date-fns"] external getISOYear : (Js.Date.t) => float = "getIsoYear";
+[@bs.module "date-fns"] external getISOWeeksInYear : (Js.Date.t) => float = "getISOWeeksInYear";
+[@bs.module "date-fns"] external getISOYear : (Js.Date.t) => float = "getISOYear";
 
 [@bs.module "date-fns"] external internal_setMilliseconds : (Js.Date.t, float) => Js.Date.t = "setMilliseconds";
 [@bs.module "date-fns"] external internal_setSeconds : (Js.Date.t, float) => Js.Date.t = "setSeconds";
@@ -113,12 +107,12 @@ let isWithinRange = (startDate, endDate, date) => internal_isWithinRange(date, s
 [@bs.module "date-fns"] external internal_setDate : (Js.Date.t, float) => Js.Date.t = "setDate";
 [@bs.module "date-fns"] external internal_setDayOfYear : (Js.Date.t, float) => Js.Date.t = "setDayOfYear";
 [@bs.module "date-fns"] external internal_setDay : (Js.Date.t, float) => Js.Date.t = "setDay";
-[@bs.module "date-fns"] external internal_setISODay : (Js.Date.t, float) => Js.Date.t = "setIsoDay";
-[@bs.module "date-fns"] external internal_setISOWeek : (Js.Date.t, float) => Js.Date.t = "setIsoWeek";
+[@bs.module "date-fns"] external internal_setISODay : (Js.Date.t, float) => Js.Date.t = "setISODay";
+[@bs.module "date-fns"] external internal_setISOWeek : (Js.Date.t, float) => Js.Date.t = "setISOWeek";
 [@bs.module "date-fns"] external internal_setMonth : (Js.Date.t, float) => Js.Date.t = "setMonth";
 [@bs.module "date-fns"] external internal_setQuarter : (Js.Date.t, float) => Js.Date.t = "setQuarter";
 [@bs.module "date-fns"] external internal_setYear : (Js.Date.t, float) => Js.Date.t = "setYear";
-[@bs.module "date-fns"] external internal_setISOYear : (Js.Date.t, float) => Js.Date.t = "setIsoYear";
+[@bs.module "date-fns"] external internal_setISOWeekYear : (Js.Date.t, float) => Js.Date.t = "setISOWeekYear";
 
 let setMilliseconds = flip(internal_setMilliseconds);
 let setSeconds = flip(internal_setSeconds);
@@ -132,7 +126,7 @@ let setISOWeek = flip(internal_setISOWeek);
 let setMonth = flip(internal_setMonth);
 let setQuarter = flip(internal_setQuarter);
 let setYear = flip(internal_setYear);
-let setISOYear = flip(internal_setISOYear);
+let setISOWeekYear = flip(internal_setISOWeekYear);
 
 [@bs.module "date-fns"] external internal_subMilliseconds : (Js.Date.t, float) => Js.Date.t = "subMilliseconds";
 [@bs.module "date-fns"] external internal_subSeconds : (Js.Date.t, float) => Js.Date.t = "subSeconds";
@@ -143,7 +137,7 @@ let setISOYear = flip(internal_setISOYear);
 [@bs.module "date-fns"] external internal_subMonths : (Js.Date.t, float) => Js.Date.t = "subMonths";
 [@bs.module "date-fns"] external internal_subQuarters : (Js.Date.t, float) => Js.Date.t = "subQuarters";
 [@bs.module "date-fns"] external internal_subYears : (Js.Date.t, float) => Js.Date.t = "subYears";
-[@bs.module "date-fns"] external internal_subISOYears : (Js.Date.t, float) => Js.Date.t = "subIsoYears";
+[@bs.module "date-fns"] external internal_subISOWeekYears : (Js.Date.t, float) => Js.Date.t = "subISOWeekYears";
 
 let subMilliseconds = flip(internal_subMilliseconds);
 let subSeconds = flip(internal_subSeconds);
@@ -154,7 +148,7 @@ let subWeeks = flip(internal_subWeeks);
 let subMonths = flip(internal_subMonths);
 let subQuarters = flip(internal_subQuarters);
 let subYears = flip(internal_subYears);
-let subISOYears = flip(internal_subISOYears);
+let subISOWeekYears = flip(internal_subISOWeekYears);
 
 [@bs.module "date-fns"] external internal_addMilliseconds : (Js.Date.t, float) => Js.Date.t = "addMilliseconds";
 [@bs.module "date-fns"] external internal_addSeconds : (Js.Date.t, float) => Js.Date.t = "addSeconds";
@@ -165,7 +159,7 @@ let subISOYears = flip(internal_subISOYears);
 [@bs.module "date-fns"] external internal_addMonths : (Js.Date.t, float) => Js.Date.t = "addMonths";
 [@bs.module "date-fns"] external internal_addQuarters : (Js.Date.t, float) => Js.Date.t = "addQuarters";
 [@bs.module "date-fns"] external internal_addYears : (Js.Date.t, float) => Js.Date.t = "addYears";
-[@bs.module "date-fns"] external internal_addISOYears : (Js.Date.t, float) => Js.Date.t = "addIsoYears";
+[@bs.module "date-fns"] external internal_addISOWeekYears : (Js.Date.t, float) => Js.Date.t = "addISOWeekYears";
 
 let addMilliseconds = flip(internal_addMilliseconds);
 let addSeconds = flip(internal_addSeconds);
@@ -176,31 +170,18 @@ let addWeeks = flip(internal_addWeeks);
 let addMonths = flip(internal_addMonths);
 let addQuarters = flip(internal_addQuarters);
 let addYears = flip(internal_addYears);
-let addISOYears = flip(internal_addISOYears);
-
-[@bs.module "date-fns"] external isThisSecond : Js.Date.t => bool = "isThisSecond";
-[@bs.module "date-fns"] external isThisMinute : Js.Date.t => bool = "isThisMinute";
-[@bs.module "date-fns"] external isThisHour : Js.Date.t => bool = "isThisHour";
-[@bs.module "date-fns"] external isToday : Js.Date.t => bool = "isToday";
-[@bs.module "date-fns"] external isYesterday : Js.Date.t => bool = "isYesterday";
-[@bs.module "date-fns"] external isTomorrow : Js.Date.t => bool = "isTomorrow";
-[@bs.module "date-fns"] external isThisWeek : Js.Date.t => bool = "isThisWeek";
-[@bs.module "date-fns"] external isThisISOWeek : Js.Date.t => bool = "isThisIsoWeek";
-[@bs.module "date-fns"] external isThisMonth : Js.Date.t => bool = "isThisMonth";
-[@bs.module "date-fns"] external isThisQuarter : Js.Date.t => bool = "isThisQuarter";
-[@bs.module "date-fns"] external isThisYear : Js.Date.t => bool = "isThisYear";
-[@bs.module "date-fns"] external isThisISOYear : Js.Date.t => bool = "isThisIsoYear";
+let addISOWeekYears = flip(internal_addISOWeekYears);
 
 [@bs.module "date-fns"] external isSameSecond : (Js.Date.t, Js.Date.t) => bool = "isSameSecond";
 [@bs.module "date-fns"] external isSameMinute : (Js.Date.t, Js.Date.t) => bool = "isSameMinute";
 [@bs.module "date-fns"] external isSameHour : (Js.Date.t, Js.Date.t) => bool = "isSameHour";
 [@bs.module "date-fns"] external isSameDay : (Js.Date.t, Js.Date.t) => bool = "isSameDay";
 [@bs.module "date-fns"] external isSameWeek : (Js.Date.t, Js.Date.t) => bool = "isSameWeek";
-[@bs.module "date-fns"] external isSameISOWeek : (Js.Date.t, Js.Date.t) => bool = "isSameIsoWeek";
+[@bs.module "date-fns"] external isSameISOWeek : (Js.Date.t, Js.Date.t) => bool = "isSameISOWeek";
 [@bs.module "date-fns"] external isSameMonth : (Js.Date.t, Js.Date.t) => bool = "isSameMonth";
 [@bs.module "date-fns"] external isSameQuarter : (Js.Date.t, Js.Date.t) => bool = "isSameQuarter";
 [@bs.module "date-fns"] external isSameYear : (Js.Date.t, Js.Date.t) => bool = "isSameYear";
-[@bs.module "date-fns"] external isSameISOYear : (Js.Date.t, Js.Date.t) => bool = "isSameIsoYear";
+[@bs.module "date-fns"] external isSameISOYear : (Js.Date.t, Js.Date.t) => bool = "isSameISOYear";
 
 [@bs.module "date-fns"] external isMonday : Js.Date.t => bool = "isMonday";
 [@bs.module "date-fns"] external isTuesday : Js.Date.t => bool = "isTuesday";
@@ -219,15 +200,15 @@ let addISOYears = flip(internal_addISOYears);
 [@bs.module "date-fns"] external differenceInDays : (Js.Date.t, Js.Date.t) => float = "differenceInDays";
 [@bs.module "date-fns"] external differenceInCalendarWeeks : (Js.Date.t, Js.Date.t) => float = "differenceInCalendarWeeks";
 [@bs.module "date-fns"] external differenceInWeeks : (Js.Date.t, Js.Date.t) => float = "differenceInWeeks";
-[@bs.module "date-fns"] external differenceInCalendarISOWeeks : (Js.Date.t, Js.Date.t) => float = "differenceInCalendarIsoWeeks";
+[@bs.module "date-fns"] external differenceInCalendarISOWeeks : (Js.Date.t, Js.Date.t) => float = "differenceInCalendarISOWeeks";
 [@bs.module "date-fns"] external differenceInCalendarMonths : (Js.Date.t, Js.Date.t) => float = "differenceInCalendarMonths";
 [@bs.module "date-fns"] external differenceInMonths : (Js.Date.t, Js.Date.t) => float = "differenceInMonths";
 [@bs.module "date-fns"] external differenceInCalendarQuarters : (Js.Date.t, Js.Date.t) => float = "differenceInCalendarQuarters";
 [@bs.module "date-fns"] external differenceInQuarters : (Js.Date.t, Js.Date.t) => float = "differenceInQuarters";
 [@bs.module "date-fns"] external differenceInYears : (Js.Date.t, Js.Date.t) => float = "differenceInYears";
-[@bs.module "date-fns"] external differenceInISOYears : (Js.Date.t, Js.Date.t) => float = "differenceInIsoYears";
+[@bs.module "date-fns"] external differenceInISOYears : (Js.Date.t, Js.Date.t) => float = "differenceInISOYears";
 [@bs.module "date-fns"] external differenceInCalendarYears : (Js.Date.t, Js.Date.t) => float = "differenceInCalendarYears";
-[@bs.module "date-fns"] external differenceInCalendarISOYears : (Js.Date.t, Js.Date.t) => float = "differenceInCalendarIsoYears";
+[@bs.module "date-fns"] external differenceInCalendarISOYears : (Js.Date.t, Js.Date.t) => float = "differenceInCalendarISOYears";
 
 [@bs.module "date-fns"] external startOfSecond : Js.Date.t => Js.Date.t = "startOfSecond";
 [@bs.module "date-fns"] external endOfSecond : Js.Date.t => Js.Date.t = "endOfSecond";
@@ -239,23 +220,23 @@ let addISOYears = flip(internal_addISOYears);
 [@bs.module "date-fns"] external endOfDay : Js.Date.t => Js.Date.t = "endOfDay";
 [@bs.module "date-fns"] external startOfWeek : Js.Date.t => Js.Date.t = "startOfWeek";
 [@bs.module "date-fns"] external endOfWeek : Js.Date.t => Js.Date.t = "endOfWeek";
-[@bs.module "date-fns"] external startOfISOWeek : Js.Date.t => Js.Date.t = "startOfIsoWeek";
-[@bs.module "date-fns"] external endOfISOWeek : Js.Date.t => Js.Date.t = "endOfIsoWeek";
+[@bs.module "date-fns"] external startOfISOWeek : Js.Date.t => Js.Date.t = "startOfISOWeek";
+[@bs.module "date-fns"] external endOfISOWeek : Js.Date.t => Js.Date.t = "endOfISOWeek";
 [@bs.module "date-fns"] external startOfMonth : Js.Date.t => Js.Date.t = "startOfMonth";
 [@bs.module "date-fns"] external endOfMonth : Js.Date.t => Js.Date.t = "endOfMonth";
 [@bs.module "date-fns"] external startOfQuarter : Js.Date.t => Js.Date.t = "startOfQuarter";
 [@bs.module "date-fns"] external endOfQuarter : Js.Date.t => Js.Date.t = "endOfQuarter";
 [@bs.module "date-fns"] external startOfYear : Js.Date.t => Js.Date.t = "startOfYear";
 [@bs.module "date-fns"] external endOfYear : Js.Date.t => Js.Date.t = "endOfYear";
-[@bs.module "date-fns"] external startOfISOYear : Js.Date.t => Js.Date.t = "startOfIsoYear";
-[@bs.module "date-fns"] external endOfISOYear : Js.Date.t => Js.Date.t = "endOfIsoYear";
+[@bs.module "date-fns"] external startOfISOYear : Js.Date.t => Js.Date.t = "startOfISOYear";
+[@bs.module "date-fns"] external endOfISOYear : Js.Date.t => Js.Date.t = "endOfISOYear";
 
 [@bs.module "date-fns"] external lastDayOfWeek : Js.Date.t => Js.Date.t = "lastDayOfWeek";
-[@bs.module "date-fns"] external lastDayOfISOWeek : Js.Date.t => Js.Date.t = "lastDayOfIsoWeek";
+[@bs.module "date-fns"] external lastDayOfISOWeek : Js.Date.t => Js.Date.t = "lastDayOfISOWeek";
 [@bs.module "date-fns"] external lastDayOfMonth : Js.Date.t => Js.Date.t = "lastDayOfMonth";
 [@bs.module "date-fns"] external lastDayOfQuarter : Js.Date.t => Js.Date.t = "lastDayOfQuarter";
 [@bs.module "date-fns"] external lastDayOfYear : Js.Date.t => Js.Date.t = "lastDayOfYear";
-[@bs.module "date-fns"] external lastDayOfISOYear : Js.Date.t => Js.Date.t = "lastDayOfIsoYear";
+[@bs.module "date-fns"] external lastDayOfISOYear : Js.Date.t => Js.Date.t = "lastDayOfISOYear";
 
 [@bs.module "date-fns"] external startOfYesterday : unit => Js.Date.t = "startOfYesterday";
 [@bs.module "date-fns"] external endOfYesterday : unit => Js.Date.t = "endOfYesterday";
